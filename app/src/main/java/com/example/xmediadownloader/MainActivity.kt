@@ -18,12 +18,8 @@ import com.google.android.material.button.MaterialButton
 import com.google.android.material.button.MaterialButtonToggleGroup
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.textfield.TextInputEditText
-import com.yausername.youtubedl_android.YoutubeDL
-import com.yausername.youtubedl_android.YoutubeDLRequest
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,7 +34,8 @@ class MainActivity : AppCompatActivity() {
     private val capturedUrls = mutableSetOf<String>()
     private var videoCount = 0
     private var pictureCount = 0
-    private var activeProfileFolder = "Link"
+    private var activeFolder = "Link"
+    private var isFullPageMode = false
 
     private val reservedPaths = setOf(
         "home", "explore", "notifications", "messages", "i", "settings", "search", "compose"
@@ -56,17 +53,6 @@ class MainActivity : AppCompatActivity() {
         tvStatus = findViewById(R.id.tvStatus)
         tvFolderTarget = findViewById(R.id.tvFolderTarget)
         webView = findViewById(R.id.xWebView)
-
-        // Initialize yt-dlp engine for single/multi link extraction
-        lifecycleScope.launch(Dispatchers.IO) {
-            try {
-                YoutubeDL.getInstance().init(application)
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    tvStatus.text = "Engine Init Error: ${e.message}"
-                }
-            }
-        }
 
         setupModeSwitcher()
         setupWebView()
@@ -101,7 +87,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Download Single or Multiple Links
+        // Mode 1: Download Single or Multiple Links
         findViewById<MaterialButton>(R.id.btnDownloadLinks).setOnClickListener {
             val links = etMultiLinks.text?.toString().orEmpty()
                 .lines()
@@ -112,10 +98,10 @@ class MainActivity : AppCompatActivity() {
                 tvStatus.text = "Please paste at least one valid X URL."
                 return@setOnClickListener
             }
-            downloadBatchLinks(links)
+            processBatchLinks(links)
         }
 
-        // Start Full Page Auto-Scroll & Media Capture
+        // Mode 2: Start Full Page Auto-Scroll & Media Capture
         findViewById<MaterialButton>(R.id.btnStartFullPage).setOnClickListener {
             var targetUrl = etProfileUrl.text?.toString()?.trim().orEmpty()
             if (targetUrl.isBlank()) {
@@ -126,20 +112,22 @@ class MainActivity : AppCompatActivity() {
                 targetUrl = "https://x.com/${targetUrl.removePrefix("@")}"
             }
 
-            activeProfileFolder = extractFolderName(targetUrl)
+            isFullPageMode = true
+            activeFolder = extractFolderName(targetUrl)
             capturedUrls.clear()
             videoCount = 0
             pictureCount = 0
 
-            tvFolderTarget.text = "Saving to: Downloads/XMedia/$activeProfileFolder/Videos & Pictures"
-            tvStatus.text = "Loading @$activeProfileFolder & starting auto-scroll..."
+            tvFolderTarget.text = "Saving to: Downloads/XMedia/$activeFolder/Videos & Pictures"
+            tvStatus.text = "Loading @$activeFolder & starting auto-scroll..."
             webView.loadUrl(targetUrl)
         }
 
         // Stop Full Page Auto-Scroll
         findViewById<MaterialButton>(R.id.btnStopFullPage).setOnClickListener {
+            isFullPageMode = false
             webView.evaluateJavascript("window.stopAutoScroll = true;", null)
-            tvStatus.text = "Stopped. Saved $videoCount Videos & $pictureCount Pictures to $activeProfileFolder/"
+            tvStatus.text = "Stopped. Saved $videoCount Videos & $pictureCount Pictures to $activeFolder/"
         }
     }
 
@@ -150,8 +138,7 @@ class MainActivity : AppCompatActivity() {
     private fun extractFolderName(url: String): String {
         return try {
             val uri = Uri.parse(url)
-            val segments = uri.pathSegments
-            val firstSegment = segments.firstOrNull()?.trim()?.removePrefix("@")
+            val firstSegment = uri.pathSegments.firstOrNull()?.trim()?.removePrefix("@")
             if (!firstSegment.isNullOrBlank() &&
                 !reservedPaths.contains(firstSegment.lowercase()) &&
                 firstSegment.matches(Regex("^[A-Za-z0-9_]{1,30}$"))
@@ -166,59 +153,29 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Mode 1: Downloads single or multiple post links and sorts them into
-     * <Username or Link>/Videos and <Username or Link>/Pictures.
+     * Mode 1: Sequentially loads each pasted post link in the authenticated WebView,
+     * captures its media URLs, and sorts them into <Username or Link>/Videos & Pictures.
      */
-    private fun downloadBatchLinks(links: List<String>) {
-        val baseDownloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+    private fun processBatchLinks(links: List<String>) {
+        isFullPageMode = false
+        capturedUrls.clear()
+        videoCount = 0
+        pictureCount = 0
 
-        lifecycleScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch {
             links.forEachIndexed { index, url ->
-                val folderName = extractFolderName(url)
-                val stagingDir = File(baseDownloads, "XMedia/.staging_${System.currentTimeMillis()}")
-                if (!stagingDir.exists()) stagingDir.mkdirs()
+                activeFolder = extractFolderName(url)
+                tvFolderTarget.text = "Saving to: Downloads/XMedia/$activeFolder/Videos & Pictures"
+                tvStatus.text = "Loading link ${index + 1} of ${links.size} ($activeFolder)..."
 
-                withContext(Dispatchers.Main) {
-                    tvFolderTarget.text = "Saving to: Downloads/XMedia/$folderName/Videos & Pictures"
-                    tvStatus.text = "Processing link ${index + 1} of ${links.size} ($folderName)..."
-                }
-
-                try {
-                    val request = YoutubeDLRequest(url).apply {
-                        addOption("-o", "${stagingDir.absolutePath}/%(id)s_%(autonumber)s.%(ext)s")
-                        addOption("--no-playlist")
-                    }
-                    YoutubeDL.getInstance().execute(request)
-
-                    // Sort downloaded files into Videos/ and Pictures/
-                    stagingDir.listFiles()?.forEach { file ->
-                        val ext = file.extension.lowercase()
-                        val subFolder = if (ext in listOf("mp4", "mov", "webm", "mkv")) "Videos" else "Pictures"
-                        val targetDir = File(baseDownloads, "XMedia/$folderName/$subFolder")
-                        if (!targetDir.exists()) targetDir.mkdirs()
-
-                        val destFile = File(targetDir, file.name)
-                        file.copyTo(destFile, overwrite = true)
-                        file.delete()
-                    }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        tvStatus.text = "Error on link ${index + 1}: ${e.message}"
-                    }
-                } finally {
-                    stagingDir.deleteRecursively()
-                }
+                webView.loadUrl(url)
+                // Give X's API 4.5 seconds per post to load and trigger media capture
+                delay(4500)
             }
-
-            withContext(Dispatchers.Main) {
-                tvStatus.text = "Done! Processed ${links.size} link(s) into Videos & Pictures folders."
-            }
+            tvStatus.text = "Batch complete! Saved $videoCount Videos & $pictureCount Pictures."
         }
     }
 
-    /**
-     * Mode 2: WebView with XHR/Fetch API interception and auto-scroll for full pages.
-     */
     @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView() {
         webView.settings.javaScriptEnabled = true
@@ -228,9 +185,10 @@ class MainActivity : AppCompatActivity() {
         webView.webViewClient = object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 super.onPageFinished(view, url)
+                val shouldScroll = if (isFullPageMode) "false" else "true"
                 val injectorScript = """
                     (function() {
-                        window.stopAutoScroll = false;
+                        window.stopAutoScroll = $shouldScroll;
                         if (!window.xHookInstalled) {
                             window.xHookInstalled = true;
                             const origOpen = XMLHttpRequest.prototype.open;
@@ -274,7 +232,7 @@ class MainActivity : AppCompatActivity() {
             runOnUiThread {
                 if (type == "video") videoCount++ else pictureCount++
                 tvStatus.text = "Captured: $videoCount Videos | $pictureCount Pictures"
-                enqueueSortedDownload(mediaUrl, type, activeProfileFolder)
+                enqueueSortedDownload(mediaUrl, type, activeFolder)
             }
         }
     }
