@@ -7,7 +7,6 @@
     android:background="?android:attr/colorBackground"
     android:padding="14dp">
 
-    <!-- Header Title -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -16,7 +15,6 @@
         android:textStyle="bold"
         android:layout_marginBottom="10dp" />
 
-    <!-- Mode Switcher Buttons -->
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/modeToggleGroup"
         android:layout_width="match_parent"
@@ -42,7 +40,6 @@
             android:text="Full Page Download" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
-    <!-- SECTION 1: Single / Multiple Links Panel -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/panelLinks"
         android:layout_width="match_parent"
@@ -95,7 +92,6 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- SECTION 2: Full Page / Profile Panel -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/panelFullPage"
         android:layout_width="match_parent"
@@ -149,7 +145,6 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Status & Folder Output Info -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -176,12 +171,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="Save Path: Downloads/XMedia/<Username or Link>/Videos &amp; Pictures"
+                android:text="Save Path: Downloads/XMedia/[Username or Link]/Videos &amp; Pictures"
                 android:textSize="11sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Embedded X Session Browser -->
     <WebView
         android:id="@+id/xWebView"
         android:layout_width="match_parent"
