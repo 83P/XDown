@@ -13,10 +13,6 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
-        ndk {
-            abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
-        }
     }
 
     compileOptions {
@@ -27,12 +23,6 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
-    packaging {
-        jniLibs {
-            useLegacyPackaging = true
-        }
-    }
 }
 
 dependencies {
@@ -41,8 +31,4 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-
-    // Embedded yt-dlp for resolving single/multiple post URLs
-    implementation("io.github.junkfood02.youtubedl-android:library:0.15.0")
-    implementation("io.github.junkfood02.youtubedl-android:ffmpeg:0.15.0")
 }
