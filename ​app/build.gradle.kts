@@ -42,7 +42,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
-    // Embedded yt-dlp for resolving single/multiple post URLs
     implementation("io.github.junkfood02.youtubedl-android:library:0.15.0")
     implementation("io.github.junkfood02.youtubedl-android:ffmpeg:0.15.0")
 }
