@@ -5,16 +5,34 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="?android:attr/colorBackground"
-    android:padding="14dp">
+    android:padding="12dp">
 
-    <TextView
+    <!-- Top Header + Sign In Button -->
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="X Media Downloader"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="10dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="X Media Downloader"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLoginX"
+            style="?attr/materialButtonTonalStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sign In to X"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+    <!-- Mode Switcher Buttons -->
     <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/modeToggleGroup"
         android:layout_width="match_parent"
@@ -40,11 +58,12 @@
             android:text="Full Page Download" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
+    <!-- SECTION 1: Single / Multiple Links Panel -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/panelLinks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="2dp">
 
@@ -52,51 +71,60 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="10dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Paste 1 or more X post URLs (one per line)">
+                android:hint="Paste 1 or more X links (even without spaces)">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etMultiLinks"
                     android:layout_width="match_parent"
-                    android:layout_height="110dp"
+                    android:layout_height="95dp"
                     android:gravity="top|start"
                     android:inputType="textMultiLine"
-                    android:textSize="13sp" />
+                    android:textSize="12sp" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="6dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnPasteLinks"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="6dp"
                     android:text="Paste" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnClearLinks"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="Clear" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnDownloadLinks"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Download All Links" />
+                    android:text="Download All" />
             </LinearLayout>
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- SECTION 2: Full Page / Profile Panel -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/panelFullPage"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:visibility="gone"
         app:cardCornerRadius="12dp"
         app:cardElevation="2dp">
@@ -105,12 +133,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="12dp">
+            android:padding="10dp">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Profile URL (e.g. https://x.com/username/media)">
+                android:hint="Profile URL or @username">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etProfileUrl"
@@ -125,7 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="8dp">
+                android:layout_marginTop="6dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnStartFullPage"
@@ -145,6 +173,7 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Status & Folder Output Info -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -156,15 +185,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="10dp">
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/tvStatus"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Status: Log into X below, then choose a mode above."
+                android:text="Status: Tap 'Sign In to X' if viewing private accounts."
                 android:textStyle="bold"
-                android:textSize="13sp" />
+                android:textSize="12sp" />
 
             <TextView
                 android:id="@+id/tvFolderTarget"
@@ -176,6 +205,7 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Embedded X Session Browser -->
     <WebView
         android:id="@+id/xWebView"
         android:layout_width="match_parent"
