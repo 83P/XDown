@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "XMediaDownloader"
 include(":app")
+project(":app").buildFileName = "build.gradle.kts"
