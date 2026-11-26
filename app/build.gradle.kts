@@ -3,6 +3,8 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+val runNumber = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
+
 android {
     namespace = "com.example.xmediadownloader"
     compileSdk = 34
@@ -11,8 +13,27 @@ android {
         applicationId = "com.example.xmediadownloader"
         minSdk = 24
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 100 + runNumber
+        versionName = "1.0.$runNumber"
+    }
+
+    signingConfigs {
+        create("persistent") {
+            storeFile = file("xdown-signing.jks")
+            storePassword = "xdown2026password"
+            keyAlias = "xdown_key"
+            keyPassword = "xdown2026password"
+        }
+    }
+
+    buildTypes {
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("persistent")
+        }
+        getByName("release") {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("persistent")
+        }
     }
 
     compileOptions {
