@@ -417,7 +417,7 @@ class MainActivity : AppCompatActivity() {
         if (filtered.isEmpty()) {
             val emptyTv = TextView(this).apply {
                 text = "No items in this queue view yet."
-                textSize = 13sp
+                textSize = 13f
                 setPadding(8, 24, 8, 8)
             }
             queueItemsContainer.addView(emptyTv)
