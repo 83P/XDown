@@ -92,7 +92,7 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMultiLinks"
                             android:layout_width="match_parent"
-                            android:layout_height="85dp"
+                            android:layout_height="80dp"
                             android:gravity="top|start"
                             android:inputType="textMultiLine"
                             android:textSize="12sp" />
@@ -160,6 +160,60 @@
                             android:textSize="13sp" />
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <!-- Scroll Mode + Custom Delay Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="6dp">
+
+                        <com.google.android.material.button.MaterialButtonToggleGroup
+                            android:id="@+id/scrollModeGroup"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            app:singleSelection="true"
+                            app:selectionRequired="true"
+                            app:checkedButton="@id/btnScrollSlow">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnScrollSlow"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Slow Scroll"
+                                android:textSize="11sp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnScrollEnd"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Jump to End"
+                                android:textSize="11sp" />
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="95dp"
+                            android:layout_height="wrap_content"
+                            android:hint="Delay (s)">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etCustomDelay"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="numberDecimal"
+                                android:singleLine="true"
+                                android:text="2.5"
+                                android:textSize="12sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <!-- Start / Stop / Duplicate Check Row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -171,15 +225,26 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:layout_marginEnd="6dp"
-                            android:text="Start Full Page" />
+                            android:layout_marginEnd="4dp"
+                            android:text="Start"
+                            android:textSize="12sp" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnStopFullPage"
                             style="?attr/materialButtonOutlinedStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Stop" />
+                            android:layout_marginEnd="4dp"
+                            android:text="Stop"
+                            android:textSize="12sp" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnDuplicatePrompt"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Duplicates"
+                            android:textSize="12sp" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
@@ -225,7 +290,7 @@
                 android:layout_marginTop="8dp" />
         </LinearLayout>
 
-        <!-- TAB 2: DOWNLOAD QUEUE & HISTORY -->
+        <!-- TAB 2: DOWNLOAD QUEUE & FAILED RETRY -->
         <LinearLayout
             android:id="@+id/tabQueue"
             android:layout_width="match_parent"
@@ -251,6 +316,15 @@
                     android:textStyle="bold" />
 
                 <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRetryAllFailed"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:text="Retry All"
+                    android:textSize="12sp" />
+
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnClearQueueList"
                     style="?attr/materialButtonOutlinedStyle"
                     android:layout_width="wrap_content"
@@ -271,7 +345,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="10dp"
-                    android:text="Queued: 0 | Saved: 0 | Duplicates Skipped: 0"
+                    android:text="Verified: 0 | Failed: 0 | Duplicates Skipped: 0"
                     android:textStyle="bold"
                     android:textSize="12sp" />
             </com.google.android.material.card.MaterialCardView>
@@ -293,7 +367,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="All"
-                    android:textSize="12sp" />
+                    android:textSize="11sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilterSaved"
@@ -301,8 +375,17 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Saved"
-                    android:textSize="12sp" />
+                    android:text="Verified"
+                    android:textSize="11sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFilterFailed"
+                    style="?attr/materialButtonOutlinedStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Failed"
+                    android:textSize="11sp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFilterSkipped"
@@ -311,7 +394,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Duplicates"
-                    android:textSize="12sp" />
+                    android:textSize="11sp" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <ScrollView
@@ -350,7 +433,7 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="10dp" />
 
-                <!-- Download Preferences -->
+                <!-- Download & Verification Rules -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -366,75 +449,132 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Download Rules"
+                            android:text="Download &amp; Verification Rules"
                             android:textStyle="bold"
                             android:textSize="14sp"
                             android:layout_marginBottom="6dp" />
 
                         <com.google.android.material.materialswitch.MaterialSwitch
-                            android:id="@+id/switchSkipDuplicates"
+                            android:id="@+id/switchAutoRetry"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="Auto-skip previously downloaded media" />
+                            android:text="Auto-retry failed or incomplete downloads" />
 
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:id="@+id/switchDownloadVideos"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="Download Videos (HD MP4)" />
+                            android:text="Download Videos (Highest HD MP4)" />
 
                         <com.google.android.material.materialswitch.MaterialSwitch
                             android:id="@+id/switchDownloadPictures"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:checked="true"
-                            android:text="Download Pictures (Original Quality)" />
+                            android:text="Download Pictures (Full Original / 4K Quality)" />
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Full-Page Auto-Scroll Speed"
+                            android:text="Duplicate File Handling Policy"
                             android:textSize="13sp" />
 
                         <com.google.android.material.button.MaterialButtonToggleGroup
-                            android:id="@+id/scrollSpeedGroup"
+                            android:id="@+id/duplicatePolicyGroup"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
                             app:singleSelection="true"
                             app:selectionRequired="true"
-                            app:checkedButton="@id/btnSpeedNormal">
+                            app:checkedButton="@id/btnDupNo">
 
                             <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnSpeedFast"
+                                android:id="@+id/btnDupNo"
                                 style="?attr/materialButtonOutlinedStyle"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Fast (1.5s)"
+                                android:text="No (Skip Duplicates)"
                                 android:textSize="11sp" />
 
                             <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnSpeedNormal"
+                                android:id="@+id/btnDupAlways"
                                 style="?attr/materialButtonOutlinedStyle"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Normal (2.5s)"
-                                android:textSize="11sp" />
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnSpeedSlow"
-                                style="?attr/materialButtonOutlinedStyle"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:text="Slow (4.0s)"
+                                android:text="Yes, Always Redownload"
                                 android:textSize="11sp" />
                         </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="Full-Page Scroll Mode &amp; Custom Delay"
+                            android:textSize="13sp" />
+
+                        <com.google.android.material.button.MaterialButtonToggleGroup
+                            android:id="@+id/settingsScrollModeGroup"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            app:singleSelection="true"
+                            app:selectionRequired="true"
+                            app:checkedButton="@id/btnSettingsScrollSlow">
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSettingsScrollSlow"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Slow Scroll"
+                                android:textSize="11sp" />
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSettingsScrollEnd"
+                                style="?attr/materialButtonOutlinedStyle"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Jump to End of Page"
+                                android:textSize="11sp" />
+                        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:layout_marginTop="6dp">
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="8dp"
+                                android:hint="Custom Scroll Delay (seconds)">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etSettingsCustomDelay"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="numberDecimal"
+                                    android:singleLine="true"
+                                    android:text="2.5"
+                                    android:textSize="13sp" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnSaveCustomDelay"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Apply" />
+                        </LinearLayout>
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -455,7 +595,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Long-Term Memory &amp; Cache"
+                            android:text="Long-Term Memory &amp; Device Storage"
                             android:textStyle="bold"
                             android:textSize="14sp"
                             android:layout_marginBottom="4dp" />
@@ -464,7 +604,7 @@
                             android:id="@+id/tvStorageStats"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Tracked Media: 0 items | Cache Size: 0.0 MB"
+                            android:text="Verified DB: 0 items | Device Free: 0.0 GB | Cache: 0.0 MB"
                             android:textSize="12sp"
                             android:layout_marginBottom="8dp" />
 
